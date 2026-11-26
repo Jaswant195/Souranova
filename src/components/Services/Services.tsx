@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Service } from '../../types';
 import { Code2, Palette, Globe } from 'lucide-react';
+import { scrollToSection } from '../../utils/scrollToSection';
 
 const Services: React.FC = () => {
   const services: Service[] = [
@@ -44,7 +45,7 @@ const Services: React.FC = () => {
   };
 
   return (
-    <section id="services" className="relative py-24 bg-gradient-to-br from-orange-50 via-white to-orange-50 overflow-hidden">
+    <section id="services" className="scroll-mt-20 relative py-24 bg-gradient-to-br from-orange-50 via-white to-orange-50 overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-20 right-20 w-96 h-96 bg-orange-500 rounded-full filter blur-3xl"></div>
@@ -175,7 +176,10 @@ const Services: React.FC = () => {
                   </div>
 
                   {/* CTA Button */}
-                  <button className="w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-xl hover:from-orange-400 hover:to-orange-500 transition-all duration-300 flex items-center justify-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => scrollToSection('contact')}
+                    className="w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-xl hover:from-orange-400 hover:to-orange-500 transition-all duration-300 flex items-center justify-center gap-2">
                     Learn More
                     <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
@@ -314,6 +318,8 @@ const Services: React.FC = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <motion.button
+                type="button"
+                onClick={() => scrollToSection('contact')}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="px-8 py-4 bg-white text-orange-600 font-bold rounded-xl hover:bg-orange-50 transition-all duration-300 flex items-center justify-center gap-2 shadow-xl"
@@ -324,6 +330,8 @@ const Services: React.FC = () => {
                 </svg>
               </motion.button>
               <motion.button
+                type="button"
+                onClick={() => scrollToSection('contact')}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="px-8 py-4 bg-transparent text-white font-bold rounded-xl border-2 border-white hover:bg-white/10 transition-all duration-300 flex items-center justify-center gap-2"

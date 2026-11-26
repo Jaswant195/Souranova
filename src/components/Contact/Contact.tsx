@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ContactForm } from '../../types';
 import { Mail, Phone, MapPin, Send, Clock, MessageSquare, ArrowRight } from 'lucide-react';
+import { scrollToSection } from '../../utils/scrollToSection';
+
+const CONTACT_EMAIL = 'souranova@outlook.com';
+const MESSAGE_MAX_LENGTH = 1500;
 
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState<ContactForm>({
@@ -10,8 +14,6 @@ const Contact: React.FC = () => {
     subject: '',
     message: ''
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -21,34 +23,59 @@ const Contact: React.FC = () => {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Native validation (required, type="email") runs before this handler.
+  // There is no backend: the enquiry is handed to the visitor's email app.
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    const form = e.currentTarget;
 
-    try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setSubmitStatus('success');
-      setFormData({ name: '', email: '', subject: '', message: '' });
-    } catch (error) {
-      setSubmitStatus('error');
-    } finally {
-      setIsSubmitting(false);
+    const name = formData.name.trim();
+    const email = formData.email.trim();
+    const subject = formData.subject.trim();
+    const message = formData.message.trim();
+
+    // Reject whitespace-only values that pass the native `required` check
+    const fields: Array<[keyof ContactForm, string]> = [
+      ['name', name],
+      ['email', email],
+      ['subject', subject],
+      ['message', message]
+    ];
+    const emptyField = fields.find(([, value]) => !value);
+    if (emptyField) {
+      const input = form.elements.namedItem(emptyField[0]) as HTMLInputElement | HTMLTextAreaElement | null;
+      if (input) {
+        input.setCustomValidity('Please fill in this field.');
+        input.reportValidity();
+        input.addEventListener('input', () => input.setCustomValidity(''), { once: true });
+      }
+      return;
     }
+
+    const body = `${message}\n\n--\nName: ${name}\nEmail: ${email}`;
+    // encodeURIComponent (not URLSearchParams) so spaces become %20, not "+"
+    const mailtoUrl =
+      `mailto:${CONTACT_EMAIL}` +
+      `?subject=${encodeURIComponent(subject)}` +
+      `&body=${encodeURIComponent(body)}`;
+
+    // Keep the form filled in so the visitor can retry if no email app opens
+    window.location.href = mailtoUrl;
   };
 
   const contactInfo = [
     {
       icon: Mail,
       label: 'Email',
-      value: 'souranova@outlook.com',
-      href: 'souranova@outlook.com',
+      value: CONTACT_EMAIL,
+      href: `mailto:${CONTACT_EMAIL}`,
       gradient: 'from-orange-500 to-orange-600'
     },
     {
       icon: Phone,
       label: 'Phone',
       value: '+91 7842603857',
-      href: '+91 7842603857',
+      href: 'tel:+917842603857',
       gradient: 'from-orange-400 to-orange-500'
     },
     {
@@ -68,7 +95,7 @@ const Contact: React.FC = () => {
   ];
 
   return (
-    <section id="contact" className="relative py-24 bg-gradient-to-br from-orange-50 via-white to-orange-50 overflow-hidden">
+    <section id="contact" className="scroll-mt-20 relative py-24 bg-gradient-to-br from-orange-50 via-white to-orange-50 overflow-hidden">
       {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden opacity-5">
         <motion.div
@@ -130,6 +157,8 @@ const Contact: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           {/* Contact Form */}
           <motion.div
+            id="contact-form"
+            className="scroll-mt-24"
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -203,6 +232,7 @@ const Contact: React.FC = () => {
                     value={formData.message}
                     onChange={handleInputChange}
                     required
+                    maxLength={MESSAGE_MAX_LENGTH}
                     rows={6}
                     className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-300 resize-none hover:border-orange-300"
                     placeholder="Tell us about your project..."
@@ -214,52 +244,17 @@ const Contact: React.FC = () => {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     type="submit"
-                    disabled={isSubmitting}
-                    className="group relative w-full px-10 py-5 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold rounded-2xl shadow-lg hover:shadow-orange-500/30 hover:shadow-xl transform transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                    className="group relative w-full px-10 py-5 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold rounded-2xl shadow-lg hover:shadow-orange-500/30 hover:shadow-xl transform transition-all duration-300 flex items-center justify-center gap-3"
                   >
-                    {isSubmitting ? (
-                      <>
-                        <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        Sending...
-                      </>
-                    ) : (
-                      <>
-                        <Send className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
-                        Send Message
-                      </>
-                    )}
+                    <Send className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
+                    Send via Email
                   </motion.button>
+                  <p className="mt-4 text-sm text-gray-500 leading-relaxed text-center">
+                    Clicking Send opens your email app with this message ready to send.
+                    If nothing opens, email us at{' '}
+                    <span className="font-semibold text-gray-700 select-all">{CONTACT_EMAIL}</span>.
+                  </p>
                 </div>
-
-                {submitStatus === 'success' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="p-4 bg-green-100 border border-green-300 rounded-2xl"
-                  >
-                    <p className="text-green-700 font-medium flex items-center gap-2">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      Thank you for your message! We'll get back to you soon.
-                    </p>
-                  </motion.div>
-                )}
-
-                {submitStatus === 'error' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="p-4 bg-red-100 border border-red-300 rounded-2xl"
-                  >
-                    <p className="text-red-700 font-medium flex items-center gap-2">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                      Something went wrong. Please try again later.
-                    </p>
-                  </motion.div>
-                )}
               </form>
             </div>
           </motion.div>
@@ -382,6 +377,11 @@ const Contact: React.FC = () => {
                   Schedule a free 30-minute consultation with our expert team to discuss your project needs.
                 </p>
                 <motion.button
+                  type="button"
+                  onClick={() => {
+                    scrollToSection('contact-form');
+                    document.getElementById('name')?.focus({ preventScroll: true });
+                  }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="group relative w-full px-8 py-5 bg-white text-orange-600 font-bold rounded-2xl hover:bg-orange-50 transform transition-all duration-300 flex items-center justify-center gap-3 shadow-xl"

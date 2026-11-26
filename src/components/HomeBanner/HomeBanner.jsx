@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Play, Pause, ArrowRight } from 'lucide-react';
+import { scrollToSection } from '../../utils/scrollToSection';
 
 const HomeBanner = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -59,7 +60,7 @@ const HomeBanner = () => {
   };
 
   return (
-    <section id="home" className="relative h-screen overflow-hidden">
+    <section id="home" className="scroll-mt-20 relative h-screen overflow-hidden">
       {/* Background Images Carousel */}
       <AnimatePresence mode="wait">
         {slides.map((slide, index) => (
@@ -147,6 +148,8 @@ const HomeBanner = () => {
                       className="flex flex-col sm:flex-row gap-4"
                     >
                       <motion.button
+                        type="button"
+                        onClick={() => scrollToSection('contact')}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         className="group px-8 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-orange-500/30 transition-all flex items-center gap-2"
@@ -155,6 +158,8 @@ const HomeBanner = () => {
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                       </motion.button>
                       <motion.button
+                        type="button"
+                        onClick={() => scrollToSection('about')}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         className="px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-xl border-2 border-white/30 hover:bg-white/20 hover:border-white/50 transition-all flex items-center gap-2"

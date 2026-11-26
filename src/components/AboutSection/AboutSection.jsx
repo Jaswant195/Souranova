@@ -101,7 +101,7 @@ const AboutSection = () => {
   };
 
   return (
-    <section id="about" className="relative min-h-screen bg-gradient-to-br from-white via-orange-50 to-white overflow-hidden">
+    <section id="about" className="scroll-mt-20 relative min-h-screen bg-gradient-to-br from-white via-orange-50 to-white overflow-hidden">
       {/* Animated Background Elements */}
       <motion.div 
         style={{ y: y1 }}

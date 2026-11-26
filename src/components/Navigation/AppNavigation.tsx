@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import LogoImg from '/PersonalLogo.png';
+import { scrollToSection } from '../../utils/scrollToSection';
 
 const AppNavigation: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,7 +18,6 @@ const AppNavigation: React.FC = () => {
     { name: 'Home', href: '#home' },
     { name: 'About', href: '#about' },
     { name: 'Services', href: '#services' },
-    { name: 'Projects', href: '#projects' },
     { name: 'Contact', href: '#contact' },
   ];
 
@@ -62,7 +62,10 @@ const AppNavigation: React.FC = () => {
                 {link.name}
               </a>
             ))}
-            <button className={`ml-6 px-6 py-2.5 rounded-full font-semibold transition-all duration-300 ${
+            <button
+              type="button"
+              onClick={() => scrollToSection('contact')}
+              className={`ml-6 px-6 py-2.5 rounded-full font-semibold transition-all duration-300 ${
               isScrolled 
                 ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-400 hover:to-orange-500 shadow-md hover:shadow-lg' 
                 : 'bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-400 hover:to-orange-500 shadow-md hover:shadow-lg'
@@ -124,7 +127,13 @@ const AppNavigation: React.FC = () => {
             </a>
           ))}
           <div className="pt-3 pb-2">
-            <button className={`w-full py-3 rounded-xl font-semibold transition-all duration-200 ${
+            <button
+              type="button"
+              onClick={() => {
+                setIsOpen(false);
+                scrollToSection('contact');
+              }}
+              className={`w-full py-3 rounded-xl font-semibold transition-all duration-200 ${
               isScrolled 
                 ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-400 hover:to-orange-500 shadow-md' 
                 : 'bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-400 hover:to-orange-500 shadow-md'

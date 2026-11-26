@@ -24,7 +24,7 @@ const Contact: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     try {
       await new Promise(resolve => setTimeout(resolve, 2000));
       setSubmitStatus('success');
@@ -40,21 +40,21 @@ const Contact: React.FC = () => {
     {
       icon: Mail,
       label: 'Email',
-      value: 'hello@souranova.com',
-      href: 'mailto:hello@souranova.com',
+      value: 'souranova@outlook.com',
+      href: 'souranova@outlook.com',
       gradient: 'from-orange-500 to-orange-600'
     },
     {
       icon: Phone,
       label: 'Phone',
-      value: '+1 (555) 123-4567',
-      href: 'tel:+15551234567',
+      value: '+91 7842603857',
+      href: '+91 7842603857',
       gradient: 'from-orange-400 to-orange-500'
     },
     {
       icon: MapPin,
       label: 'Office',
-      value: '123 Tech Street, ABC, XY 94025',
+      value: 'A-811, Qualitas Nestilo, Osman Nagar, Hyderabad, 502032',
       href: '#',
       gradient: 'from-orange-600 to-orange-700'
     },
@@ -138,11 +138,11 @@ const Contact: React.FC = () => {
             <div className="relative bg-white rounded-3xl p-10 lg:p-12 shadow-xl border border-orange-100 hover:border-orange-300 transition-all duration-300 hover:shadow-2xl overflow-hidden">
               {/* Decorative gradient background */}
               <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-orange-100 to-orange-200 rounded-full filter blur-3xl opacity-50" />
-              
+
               <h3 className="text-3xl font-bold text-gray-900 mb-10 relative z-10">
                 Send us a <span className="text-orange-500">message</span>
               </h3>
-              
+
               <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
@@ -288,7 +288,7 @@ const Contact: React.FC = () => {
                   <motion.div
                     className={`absolute inset-0 bg-gradient-to-br ${info.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}
                   />
-                  
+
                   <div className="relative z-10">
                     <motion.div
                       whileHover={{ rotate: 15, scale: 1.1 }}
@@ -364,7 +364,7 @@ const Contact: React.FC = () => {
                   className="absolute top-10 right-10 w-8 h-8 bg-white/20 rounded-full"
                 />
               </div>
-              
+
               <div className="relative z-10">
                 <div className="flex items-center mb-6">
                   <motion.div
